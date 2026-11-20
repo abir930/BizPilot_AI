@@ -1,0 +1,7 @@
+# BizPilot AI — GitHub Pages repository .gitignore
+bizpilot-ai/
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+

@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BizPilot AI — Business Intelligence & Multi-Agent Copilot for SMEs</title>
+  <meta name="description" content="AI-Powered Business Intelligence Platform for Small and Medium Enterprises. Frontend Prototype for Hackathon.">
+  
+  <!-- Apple Cupertino Fonts & Tailwind CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS Play CDN with custom theme config -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: '#080D19',
+              sidebar: '#0C1322',
+              card: '#111B2D',
+              primary: '#3B82F6',
+              cyan: '#22D3EE',
+              success: '#22C55E',
+              warning: '#F59E0B',
+              danger: '#EF4444'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons & Chart.js -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Cupertino Stylesheet -->
+  <link rel="stylesheet" href="css/cupertino.css">
+</head>
+<body class="bg-[#080D19] text-slate-100 min-h-screen flex flex-col font-sans selection:bg-blue-600/30">
+
+  <!-- ===================================================================== -->
+  <!-- LOGIN & AUTHENTICATION SCREEN (Cupertino Style)                       -->
+  <!-- ===================================================================== -->
+  <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#080D19] p-4 overflow-y-auto">
+    <!-- Ambient Cupertino Glow Background -->
+    <div class="absolute w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none -top-20 -left-20"></div>
+    <div class="absolute w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -bottom-20 -right-20"></div>
+
+    <!-- Login Card -->
+    <div class="glass-card max-w-md w-full p-8 md:p-10 space-y-6 rounded-3xl border border-white/10 shadow-2xl relative z-10 backdrop-blur-2xl">
+      <!-- Logo & Header -->
+      <div class="text-center space-y-2">
+        <div class="w-14 h-14 rounded-3xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white mx-auto shadow-xl shadow-blue-500/30">
+          <i data-lucide="compass" class="w-8 h-8"></i>
+        </div>
+        <h2 class="text-2xl font-extrabold tracking-tight text-white mt-4">
+          BizPilot <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">AI</span>
+        </h2>
+        <p class="text-xs text-slate-400">Your Business. Your Intelligence. Your Next Move.</p>
+      </div>
+
+      <!-- Login Form -->
+      <form onsubmit="window.handleLogin(event)" class="space-y-4 text-xs">
+        <div class="space-y-1.5">
+          <label class="text-slate-300 font-semibold block">Work Email</label>
+          <div class="relative">
+            <i data-lucide="mail" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-500"></i>
+            <input type="email" id="loginEmail" value="abir@bizpilot.ai" required class="w-full pl-10 pr-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition text-xs">
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-slate-300 font-semibold block">Password</label>
+          <div class="relative">
+            <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-500"></i>
+            <input type="password" id="loginPassword" value="••••••••••••" required class="w-full pl-10 pr-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition text-xs">
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="rememberMe" checked class="rounded bg-white/10 border-white/20 text-blue-500 accent-blue-600">
+            <span>Keep me signed in</span>
+          </label>
+          <a href="#" onclick="window.showToast('Reset link sent to demo inbox', 'info'); return false;" class="text-blue-400 hover:text-blue-300 transition">Forgot?</a>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="loginSubmitBtn" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-xs shadow-lg shadow-blue-500/25 transition flex items-center justify-center gap-2">
+          <span>Sign In to Executive Dashboard</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+  <div id="mainAppContainer" class="flex-1 flex overflow-hidden">
+    
+    <!-- SIDEBAR NAVIGATION (Cupertino Frosted Sidebar) -->
+    <aside class="w-64 bg-[#0C1322]/95 backdrop-blur-xl border-r border-white/5 flex flex-col shrink-0 transition-all duration-300 z-40 hidden md:flex">
+      
+      <!-- Logo Branding -->
+      <div class="p-5 border-b border-white/5 flex items-center gap-3">
+        <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white shadow-lg shadow-blue-500/25">
+          <i data-lucide="compass" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h1 class="font-extrabold text-base tracking-tight text-white flex items-center gap-1.5">
+            BizPilot <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">AI</span>
+          </h1>
+          <p class="text-[10px] text-slate-400 tracking-wider uppercase font-semibold">Autonomous BI for SMEs</p>
+        </div>
+      </div>
+
+      <!-- Navigation Links (All 12 Pages) -->
+      <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1 text-xs font-medium" id="sidebarNav">
+        <div class="px-3 pb-1 text-[10px] font-bold tracking-wider uppercase text-slate-500">Intelligence Core</div>
+        
+        <a href="#overview" data-page="overview" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-400 hover:text-slate-100 hover:bg-white/5">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Overview Dashboard</span>
+        </a>
+
+        <a href="#copilot" data-page="copilot" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-400 hover:text-slate-100 hover:bg-white/5">
+          <i data-lucide="bot" class="w-4 h-4 text-cyan-400"></i>
+          <span class="flex-1">AI Business Copilot</span>
+          <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400">AI</span>
+        </a>
+
+        <a href="#sales" data-page="sales" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-400 hover:text-slate-100 hover:bg-white/5">
+          <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+          <span>Sales Analytics</span>
+        </a>
+
+        <a href="#financial" data-page="financial" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-400 hover:text-slate-100 hover:bg-white/5">
+          <i data-lucide="dollar-sign" class="w-4 h-4"></i>
+          <span>Financial Intelligence</span>
+        </a>
+
+        <div class="px-3 pt-3 pb-1 text-[10px] font-bold tracking-wider uppercase text-slate-500">Operations & Risk</div>
+
+        <a href="#inventory" data-page="inventory" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-400 hover:text-slate-100 hover:bg-white/5">
+          <i data-lucide="package" class="w-4 h-4"></i>
+          <span>Inventory Management</span>
+        </a>
+
+        <a href="#forecasting" data-page="forecasting" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-400 hover:text-slate-100 hover:bg-white/5">
+          <i data-lucide="trending-up" class="w-4 h-4"></i>
+          <span class="flex-1">Forecasting</span>
+          <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400">Prophet</span>
+        </a>
+
+        <a href="#anomalies" data-page="anomalies" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-400 hover:text-slate-100 hover:bg-white/5">
+          <i data-lucide="shield-alert" class="w-4 h-4 text-amber-400"></i>
+          <span class="flex-1">Anomaly Detection</span>
+          <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+        </a>
+
+        <div class="px-3 pt-3 pb-1 text-[10px] font-bold tracking-wider uppercase text-slate-500">Execution & Data</div>
+
+        <a href="#reports" data-page="reports" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-400 hover:text-slate-100 hover:bg-white/5">
+          <i data-lucide="file-text" class="w-4 h-4"></i>
+          <span>Reports & Documents</span>
+        </a>
+
+        <a href="#agents" data-page="agents" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-400 hover:text-slate-100 hover:bg-white/5">
+          <i data-lucide="cpu" class="w-4 h-4 text-blue-400"></i>
+          <span>AI Agents</span>
+        </a>
+
+        <a href="#data-sources" data-page="data-sources" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-400 hover:text-slate-100 hover:bg-white/5">
+          <i data-lucide="database" class="w-4 h-4"></i>
+          <span>Data Sources</span>
+        </a>
+
+        <a href="#automation" data-page="automation" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-400 hover:text-slate-100 hover:bg-white/5">
+          <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
+          <span>Automation</span>
+        </a>
+
+        <a href="#settings" data-page="settings" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-400 hover:text-slate-100 hover:bg-white/5">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Footer User Profile -->
+      <div class="p-3 border-t border-white/5 flex items-center justify-between text-xs">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs">
+            AR
+          </div>
+          <div>
+            <div class="font-semibold text-slate-200">Abir Rahman</div>
+            <div class="text-[10px] text-slate-400">Apex Retail & Dist.</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-1">
+          <button onclick="window.appRouter.navigate('settings')" title="Settings" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition">
+            <i data-lucide="settings" class="w-4 h-4"></i>
+          </button>
+          <button onclick="window.handleLogout()" title="Sign Out / Lock" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+      
+      <!-- TOP NAVIGATION BAR (Cupertino Header) -->
+      <header class="h-16 border-b border-white/5 bg-[#080D19]/80 backdrop-blur-xl px-6 flex items-center justify-between sticky top-0 z-30">
+        
+        <!-- Mobile Toggle & Header Title -->
+        <div class="flex items-center gap-4">
+          <button onclick="document.querySelector('aside').classList.toggle('hidden')" class="md:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+          <div class="flex items-center gap-2">
+            <h2 id="headerPageTitle" class="text-base font-bold text-white tracking-tight">Overview Dashboard</h2>
+            <span class="text-[10px] px-2 py-0.5 rounded-md bg-white/5 text-slate-400 border border-white/10">Apex Retail</span>
+          </div>
+        </div>
+
+        <!-- Global Search, Date Picker & Controls -->
+        <div class="flex items-center gap-3">
+          
+          <!-- Cmd + K Search Trigger -->
+          <button onclick="window.openSearchModal()" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-400 transition">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400"></i>
+            <span>Search anything...</span>
+            <kbd class="px-1.5 py-0.5 rounded bg-black/40 text-[10px] font-mono text-slate-400 border border-white/10">⌘K</kbd>
+          </button>
+
+          <!-- Date Filter Segment -->
+          <div class="segmented-control hidden lg:inline-flex">
+            <button class="segmented-btn" onclick="window.showToast('Filter updated: 7 Days', 'info')">7D</button>
+            <button class="segmented-btn active" onclick="window.showToast('Filter updated: 30 Days', 'info')">30D</button>
+            <button class="segmented-btn" onclick="window.showToast('Filter updated: Q3/Q4', 'info')">Q4</button>
+            <button class="segmented-btn" onclick="window.showToast('Filter updated: Year to Date', 'info')">YTD</button>
+          </div>
+
+          <!-- Theme Switcher (Cupertino Dark / Light) -->
+          <button onclick="window.toggleTheme()" title="Toggle Theme" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 transition">
+            <i data-lucide="sun-moon" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Notifications Trigger -->
+          <button onclick="window.showToast('3 unread system anomalies require review', 'warning')" class="relative p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 transition">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500"></span>
+          </button>
+
+          <!-- Ask Copilot Quick Action -->
+          <button onclick="window.appRouter.navigate('copilot')" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-semibold shadow-md shadow-blue-500/20 flex items-center gap-1.5 transition">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Ask Copilot</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- PAGE CONTENT AREA -->
+      <div class="p-6 md:p-8 space-y-8 flex-1">
+
+        <!-- =============================================================== -->
+        <!-- 1. OVERVIEW DASHBOARD                                           -->
+        <!-- =============================================================== -->
+        <section id="page-overview" class="page-view active space-y-6">
+          
+          <!-- Top Row: SME Health Score & Quick Stats -->
+          <div class="glass-card p-6 flex flex-col md:flex-row items-center justify-between gap-6 border-blue-500/20 bg-gradient-to-r from-[#111B2D] via-[#0C1527] to-[#111B2D]">
+            <div class="space-y-1 text-center md:text-left">
+              <div class="flex items-center justify-center md:justify-start gap-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-blue-400">Autonomous SME Business Health</span>
+                <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-semibold">Grade A-</span>
+              </div>
+              <h3 class="text-xl font-extrabold text-white">Overall Business Health Score: 84 / 100</h3>
+              <p class="text-xs text-slate-400 max-w-xl">
+                Strong top-line order growth (+18.2%) and healthy runway (4.8 months). Air freight surcharge compression in audio SKUs identified for dispute.
+              </p>
+            </div>
+            <div class="flex items-center gap-4 shrink-0">
+              <div class="text-center p-3 rounded-2xl bg-white/5 border border-white/5">
+                <div class="text-[10px] text-slate-400 font-mono">OPEX RATIO</div>
+                <div class="text-base font-bold text-white">73.9%</div>
+              </div>
+              <div class="text-center p-3 rounded-2xl bg-white/5 border border-white/5">
+                <div class="text-[10px] text-slate-400 font-mono">NET MARGIN</div>
+                <div class="text-base font-bold text-emerald-400">26.0%</div>
+              </div>
+              <button onclick="window.appRouter.navigate('copilot')" class="px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition flex items-center gap-2 shadow-lg shadow-blue-500/25">
+                <i data-lucide="bot" class="w-4 h-4"></i> Copilot Audit
+              </button>
+            </div>
+          </div>
+
+          <!-- KPI Cards Grid (6 Main Metrics as required) -->
+          <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+            
+            <!-- Revenue -->
+            <div class="glass-card p-4 space-y-2">
+              <div class="flex items-center justify-between text-slate-400 text-xs">
+                <span>Total Revenue</span>
+                <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
+              </div>
+              <div class="text-xl font-extrabold text-white tracking-tight">$124,580</div>
+              <div class="text-[11px] font-medium text-emerald-400 flex items-center gap-1">
+                <span>+14.8%</span> <span class="text-slate-500 font-normal">vs last mo</span>
+              </div>
+            </div>
+
+            <!-- Net Profit -->
+            <div class="glass-card p-4 space-y-2">
+              <div class="flex items-center justify-between text-slate-400 text-xs">
+                <span>Net Profit</span>
+                <i data-lucide="dollar-sign" class="w-4 h-4 text-amber-400"></i>
+              </div>
+              <div class="text-xl font-extrabold text-white tracking-tight">$32,450</div>
+              <div class="text-[11px] font-medium text-amber-400 flex items-center gap-1">
+                <span>-4.2%</span> <span class="text-slate-500 font-normal">margin dip</span>
+              </div>
+            </div>
+
+            <!-- Total Expenses -->
+            <div class="glass-card p-4 space-y-2">
+              <div class="flex items-center justify-between text-slate-400 text-xs">
+                <span>Total Expenses</span>
+                <i data-lucide="credit-card" class="w-4 h-4 text-rose-400"></i>
+              </div>
+              <div class="text-xl font-extrabold text-white tracking-tight">$92,130</div>
+              <div class="text-[11px] font-medium text-rose-400 flex items-center gap-1">
+                <span>+8.6%</span> <span class="text-slate-500 font-normal">freight spike</span>
+              </div>
+            </div>
+
+            <!-- Total Orders -->
+            <div class="glass-card p-4 space-y-2">
+              <div class="flex items-center justify-between text-slate-400 text-xs">
+                <span>Total Orders</span>
+                <i data-lucide="shopping-bag" class="w-4 h-4 text-blue-400"></i>
+              </div>
+              <div class="text-xl font-extrabold text-white tracking-tight">1,284</div>
+              <div class="text-[11px] font-medium text-emerald-400 flex items-center gap-1">
+                <span>+18.2%</span> <span class="text-slate-500 font-normal">DTC & B2B</span>
+              </div>
+            </div>
+
+            <!-- Inventory Value -->
+            <div class="glass-card p-4 space-y-2">
+              <div class="flex items-center justify-between text-slate-400 text-xs">
+                <span>Inventory Value</span>
+                <i data-lucide="package" class="w-4 h-4 text-cyan-400"></i>
+              </div>
+              <div class="text-xl font-extrabold text-white tracking-tight">$48,900</div>
+              <div class="text-[11px] font-medium text-amber-400 flex items-center gap-1">
+                <span>6 items</span> <span class="text-slate-500 font-normal">low stock</span>
+              </div>
+            </div>
+
+            <!-- Cash Flow -->
+            <div class="glass-card p-4 space-y-2">
+              <div class="flex items-center justify-between text-slate-400 text-xs">
+                <span>Cash Flow</span>
+                <i data-lucide="wallet" class="w-4 h-4 text-purple-400"></i>
+              </div>
+              <div class="text-xl font-extrabold text-white tracking-tight">$18,250</div>
+              <div class="text-[11px] font-medium text-emerald-400 flex items-center gap-1">
+                <span>+9.1%</span> <span class="text-slate-500 font-normal">4.8mo runway</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Middle Row: Interactive Charts (Revenue vs Expenses & Category Share) -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Revenue vs Expenses Line Chart (2 Cols) -->
+            <div class="glass-card p-6 lg:col-span-2 space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="font-bold text-white text-sm">Revenue vs. Expenses Trajectory</h4>
+                  <p class="text-xs text-slate-400">12-Month Historical Financial Performance & Profitability</p>
+                </div>
+                <span class="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">
+                  Real-time Ledger Sync
+                </span>
+              </div>
+              <div class="h-72 w-full">
+                <canvas id="overviewRevenueChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Category Distribution Donut Chart (1 Col) -->
+            <div class="glass-card p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="font-bold text-white text-sm">Category Mix</h4>
+                  <p class="text-xs text-slate-400">Product Revenue Contribution</p>
+                </div>
+                <button onclick="window.appRouter.navigate('sales')" class="text-blue-400 hover:text-blue-300 text-xs font-semibold">View All →</button>
+              </div>
+              <div class="h-64 w-full">
+                <canvas id="overviewCategoryChart"></canvas>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Row: AI Insights & Top Products & Recent Activity -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- AI Generated Insights (Card) -->
+            <div class="glass-card p-6 space-y-4">
+              <div class="flex items-center justify-between border-b border-white/5 pb-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                    <i data-lucide="brain" class="w-3.5 h-3.5"></i>
+                  </div>
+                  <h4 class="font-bold text-white text-sm">AI Executive Insights</h4>
+                </div>
+                <span class="text-[10px] text-slate-500 font-mono">SIMULATED</span>
+              </div>
+
+              <div class="space-y-3">
+                <div class="p-3 rounded-xl bg-amber-500/5 border border-amber-500/15 text-xs space-y-1">
+                  <div class="flex items-center justify-between font-semibold text-amber-400">
+                    <span>Freight Margin Surcharge</span>
+                    <span>-$1,730 Net</span>
+                  </div>
+                  <p class="text-slate-300 text-[11px] leading-relaxed">
+                    Air freight cost per unit rose $4.20 on PulseFlow Earbuds. Surcharge applied without required contract notice.
+                  </p>
+                  <div class="text-[10px] text-slate-400 font-mono pt-1">Source: Financial Analyst Agent</div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-rose-500/5 border border-rose-500/15 text-xs space-y-1">
+                  <div class="flex items-center justify-between font-semibold text-rose-400">
+                    <span>OmniHub Stockout Alert</span>
+                    <span>11 Days Buffer</span>
+                  </div>
+                  <p class="text-slate-300 text-[11px] leading-relaxed">
+                    Surge of 14.2 units/day puts stock at zero prior to Cyber Week. Backup warehouse transfer recommended.
+                  </p>
+                  <div class="text-[10px] text-slate-400 font-mono pt-1">Source: Forecasting Agent</div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/15 text-xs space-y-1">
+                  <div class="flex items-center justify-between font-semibold text-emerald-400">
+                    <span>B2B Wholesale Velocity</span>
+                    <span>+24.5% MoM</span>
+                  </div>
+                  <p class="text-slate-300 text-[11px] leading-relaxed">
+                    Wholesale AOV stands at $2,840. Tiered volume incentives projected to lift run rate by $18.6k.
+                  </p>
+                  <div class="text-[10px] text-slate-400 font-mono pt-1">Source: Business Advisor Agent</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Top Selling Products Table -->
+            <div class="glass-card p-6 space-y-4">
+              <div class="flex items-center justify-between border-b border-white/5 pb-3">
+                <h4 class="font-bold text-white text-sm">Top-Selling Products</h4>
+                <button onclick="window.appRouter.navigate('inventory')" class="text-blue-400 hover:text-blue-300 text-xs font-semibold">Inventory →</button>
+              </div>
+
+              <div class="space-y-3">
+                <div class="flex items-center justify-between text-xs py-2 border-b border-white/5">
+                  <div>
+                    <div class="font-semibold text-slate-200">PulseFlow Noise-Canceling Buds</div>
+                    <div class="text-[10px] text-slate-400">412 Units Sold · 42.5% Margin</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="font-bold font-mono text-white">$32,960</div>
+                    <span class="text-[10px] text-emerald-400">Top SKU</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between text-xs py-2 border-b border-white/5">
+                  <div>
+                    <div class="font-semibold text-slate-200">OmniHub Smart Screen Pro</div>
+                    <div class="text-[10px] text-slate-400">238 Units Sold · 38.0% Margin</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="font-bold font-mono text-white">$28,560</div>
+                    <span class="text-[10px] text-amber-400">Low Stock</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between text-xs py-2 border-b border-white/5">
+                  <div>
+                    <div class="font-semibold text-slate-200">AeroTrack GPS Smartband 4</div>
+                    <div class="text-[10px] text-slate-400">310 Units Sold · 49.1% Margin</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="font-bold font-mono text-white">$21,700</div>
+                    <span class="text-[10px] text-emerald-400">High Margin</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between text-xs py-2">
+                  <div>
+                    <div class="font-semibold text-slate-200">NovaSound Portable Subwoofer</div>
+                    <div class="text-[10px] text-slate-400">145 Units Sold · 36.2% Margin</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="font-bold font-mono text-white">$15,950</div>
+                    <span class="text-[10px] text-slate-400">Stable</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent SME Activity Feed -->
+            <div class="glass-card p-6 space-y-4">
+              <div class="flex items-center justify-between border-b border-white/5 pb-3">
+                <h4 class="font-bold text-white text-sm">Recent Activity Stream</h4>
+                <span class="text-[10px] text-slate-500 font-mono">LIVE FEED</span>
+              </div>
+
+              <div class="space-y-3.5 text-xs">
+                <div class="flex items-start gap-3">
+                  <div class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-slate-200">Bulk Order #PO-9411</div>
+                    <div class="text-slate-400 text-[11px]">Acme Tech purchased 65x PulseFlow Buds ($5,200)</div>
+                    <div class="text-[10px] text-slate-500 mt-0.5">12 mins ago</div>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                  <div class="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <i data-lucide="brain" class="w-3.5 h-3.5"></i>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-slate-200">Forecasting Agent Triggered</div>
+                    <div class="text-slate-400 text-[11px]">Detected 28% demand spike for OmniHub before Cyber Week</div>
+                    <div class="text-[10px] text-slate-500 mt-0.5">44 mins ago</div>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                  <div class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-slate-200">Unusual Freight Cost Flagged</div>
+                    <div class="text-slate-400 text-[11px]">Invoice #FRT-8812 was 34% higher than supplier average</div>
+                    <div class="text-[10px] text-slate-500 mt-0.5">2 hrs ago</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =============================================================== -->
+        <!-- 2. AI BUSINESS COPILOT                                          -->
+        <!-- =============================================================== -->
+        <section id="page-copilot" class="page-view space-y-6">
+          
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-extrabold text-white">AI Business Copilot</h3>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                  DEMO SIMULATION · MOCK COPILOT
+                </span>
+              </div>
+              <p class="text-xs text-slate-400">Autonomous SME executive reasoning powered by simulated multi-agent synthesis.</p>
+            </div>
+            
+            <!-- Quick Agent Stack Pill -->
+            <div class="flex items-center gap-2 text-xs text-slate-400 bg-white/5 px-3 py-1.5 rounded-xl border border-white/5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Active Agents: <strong>5 Specialized Modules</strong></span>
+            </div>
+          </div>
+
+          <!-- Suggested Prompt Chips (Requirement 5) -->
+          <div class="flex flex-wrap gap-2 text-xs">
+            <span class="text-slate-500 text-xs font-semibold py-1.5 flex items-center gap-1">
+              <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-amber-400"></i> Suggested:
+            </span>
+            <button onclick="window.bizCopilot.askPrompt('profit')" class="px-3 py-1.5 rounded-xl glass-card hover:border-blue-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5">
+              Why did my profit decrease this month?
+            </button>
+            <button onclick="window.bizCopilot.askPrompt('forecast')" class="px-3 py-1.5 rounded-xl glass-card hover:border-blue-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5">
+              Forecast my sales for the next 30 days.
+            </button>
+            <button onclick="window.bizCopilot.askPrompt('restock')" class="px-3 py-1.5 rounded-xl glass-card hover:border-blue-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5">
+              Which products need restocking?
+            </button>
+            <button onclick="window.bizCopilot.askPrompt('anomalies')" class="px-3 py-1.5 rounded-xl glass-card hover:border-blue-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5">
+              Identify unusual transactions.
+            </button>
+            <button onclick="window.bizCopilot.askPrompt('margin')" class="px-3 py-1.5 rounded-xl glass-card hover:border-blue-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5">
+              How can I improve my profit margin?
+            </button>
+          </div>
+
+          <!-- Chat Window -->
+          <div class="glass-card flex flex-col h-[540px] rounded-3xl border border-white/10 overflow-hidden">
+            
+            <!-- Messages Stream -->
+            <div id="copilotMessages" class="flex-1 overflow-y-auto p-6 space-y-5">
+              
+              <!-- Welcome Initial Message -->
+              <div class="flex gap-3 max-w-2xl animate-fade-in">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-400 text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-md">
+                  <i data-lucide="bot" class="w-4 h-4"></i>
+                </div>
+                <div class="space-y-1.5">
+                  <div class="glass-card p-4 rounded-2xl rounded-tl-none text-slate-200 text-sm leading-relaxed border border-white/10">
+                    <p class="font-semibold text-white mb-1">Hello Abir! I am your BizPilot AI Business Copilot.</p>
+                    <p class="text-slate-300 text-xs leading-relaxed">
+                      I supervise a specialized team of 5 simulated autonomous agents analyzing your QuickBooks ledger, Shopify store velocity, and inventory levels. Select any suggested prompt above or type a custom question below to test our multi-agent decision engine.
+                    </p>
+                    <div class="mt-3 pt-2 border-t border-white/5 flex items-center gap-2 text-[10px] text-slate-500 font-mono">
+                      <span>STATUS: READY</span> · <span>AGENTS MOUNTED: 5</span> · <span>DEMO SIMULATION</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Input Bar -->
+            <div class="p-4 bg-[#0C1322]/90 border-t border-white/5 flex items-center gap-3">
+              <input type="text" id="copilotInput" onkeydown="if(event.key==='Enter') window.bizCopilot.sendMessage()" placeholder="Ask BizPilot AI anything about your SME sales, margins, or operations..." class="flex-1 bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition">
+              <button onclick="window.bizCopilot.sendMessage()" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-blue-500/20">
+                <span>Send</span>
+                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =============================================================== -->
+        <!-- 3. SALES ANALYTICS                                              -->
+        <!-- =============================================================== -->
+        <section id="page-sales" class="page-view space-y-6">
+          
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-extrabold text-white">Sales Analytics</h3>
+              <p class="text-xs text-slate-400">Multi-channel velocity, average order values, and transaction ledger.</p>
+            </div>
+            <button onclick="window.exportSalesCSV()" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 transition flex items-center gap-2">
+              <i data-lucide="download" class="w-3.5 h-3.5 text-blue-400"></i> Export CSV
+            </button>
+          </div>
+
+          <!-- Sales KPIs -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-xs text-slate-400">Total Sales</div>
+              <div class="text-2xl font-extrabold text-white">$124,580</div>
+              <div class="text-[11px] text-emerald-400 font-medium">+14.8% MoM</div>
+            </div>
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-xs text-slate-400">Average Order Value (AOV)</div>
+              <div class="text-2xl font-extrabold text-white">$97.02</div>
+              <div class="text-[11px] text-emerald-400 font-medium">+5.4% basket size</div>
+            </div>
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-xs text-slate-400">Total Transactions</div>
+              <div class="text-2xl font-extrabold text-white">1,284</div>
+              <div class="text-[11px] text-blue-400 font-medium">99.1% fulfillment rate</div>
+            </div>
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-xs text-slate-400">Sales Growth Index</div>
+              <div class="text-2xl font-extrabold text-cyan-400">118.2</div>
+              <div class="text-[11px] text-slate-400 font-medium">Indexed vs 2025 base</div>
+            </div>
+          </div>
+
+          <!-- Charts Row -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="glass-card p-6 lg:col-span-2 space-y-4">
+              <h4 class="font-bold text-white text-sm">Monthly Revenue Trend</h4>
+              <div class="h-64 w-full">
+                <canvas id="salesTrendsChart"></canvas>
+              </div>
+            </div>
+            <div class="glass-card p-6 space-y-4">
+              <h4 class="font-bold text-white text-sm">Sales Channels Mix</h4>
+              <div class="h-64 w-full">
+                <canvas id="salesChannelChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Transactions Table -->
+          <div class="glass-card p-6 space-y-4">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div>
+                <h4 class="font-bold text-white text-sm">Recent Transactions Ledger</h4>
+                <p class="text-xs text-slate-400">Filtered real-time orders across DTC, Amazon, and B2B Wholesale.</p>
+              </div>
+
+              <!-- Controls -->
+              <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                <input type="text" placeholder="Search customer, ID, SKU..." oninput="window.salesState.search = this.value; window.renderSalesTable();" class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                <select onchange="window.salesState.statusFilter = this.value; window.renderSalesTable();" class="px-3 py-1.5 rounded-xl bg-[#0C1322] border border-white/10 text-xs text-slate-300 focus:outline-none">
+                  <option value="all">All Statuses</option>
+                  <option value="completed">Completed</option>
+                  <option value="pending">Pending</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+                <select onchange="window.salesState.channelFilter = this.value; window.renderSalesTable();" class="px-3 py-1.5 rounded-xl bg-[#0C1322] border border-white/10 text-xs text-slate-300 focus:outline-none">
+                  <option value="all">All Channels</option>
+                  <option value="Shopify">Shopify Store</option>
+                  <option value="Amazon">Amazon US</option>
+                  <option value="B2B">B2B Wholesale</option>
+                  <option value="Retail">Retail Popups</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-white/10 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                    <th class="py-3 px-4">TX ID</th>
+                    <th class="py-3 px-4">Date & Time</th>
+                    <th class="py-3 px-4">Customer</th>
+                    <th class="py-3 px-4">Product SKU</th>
+                    <th class="py-3 px-4">Channel</th>
+                    <th class="py-3 px-4">Amount</th>
+                    <th class="py-3 px-4">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="salesTableBody">
+                  <!-- Populated via renderSalesTable() -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Table Footer -->
+            <div class="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-white/5">
+              <span>Showing 8 of 50 recorded transactions</span>
+              <div class="flex items-center gap-1.5">
+                <button onclick="if(window.salesState.page>1){ window.salesState.page--; window.renderSalesTable(); }" class="px-3 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300">Previous</button>
+                <button onclick="window.salesState.page++; window.renderSalesTable();" class="px-3 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300">Next</button>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =============================================================== -->
+        <!-- 4. FINANCIAL INTELLIGENCE                                       -->
+        <!-- =============================================================== -->
+        <section id="page-financial" class="page-view space-y-6">
+          
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-extrabold text-white">Financial Intelligence & P&L</h3>
+              <p class="text-xs text-slate-400">Automated income, margin breakdown, expense audit, and runway modeling.</p>
+            </div>
+            <button onclick="window.appRouter.navigate('copilot'); window.bizCopilot.askPrompt('profit');" class="px-4 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white text-xs font-semibold transition flex items-center gap-2">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Ask Copilot Why Profit Dropped
+            </button>
+          </div>
+
+          <!-- Financial KPI Row -->
+          <div class="grid grid-cols-2 lg:grid-cols-6 gap-4">
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono">GROSS REVENUE</div>
+              <div class="text-xl font-extrabold text-white">$124,580</div>
+              <div class="text-[11px] text-emerald-400">+14.8%</div>
+            </div>
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono">TOTAL EXPENSES</div>
+              <div class="text-xl font-extrabold text-rose-400">$92,130</div>
+              <div class="text-[11px] text-rose-400">+8.6% (Over budget)</div>
+            </div>
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono">GROSS PROFIT</div>
+              <div class="text-xl font-extrabold text-white">$52,950</div>
+              <div class="text-[11px] text-slate-300">42.5% Gross Margin</div>
+            </div>
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono">NET PROFIT</div>
+              <div class="text-xl font-extrabold text-emerald-400">$32,450</div>
+              <div class="text-[11px] text-amber-400">-4.2% Margin dip</div>
+            </div>
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono">NET MARGIN</div>
+              <div class="text-xl font-extrabold text-cyan-400">26.0%</div>
+              <div class="text-[11px] text-slate-400">Target: 30.0%</div>
+            </div>
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono">CASH RUNWAY</div>
+              <div class="text-xl font-extrabold text-purple-400">4.8 Mos</div>
+              <div class="text-[11px] text-emerald-400">Low burn profile</div>
+            </div>
+          </div>
+
+          <!-- Charts Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <div class="glass-card p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-white text-sm">Income vs Expenses & Net Margin (6-Mo)</h4>
+                <span class="text-[10px] text-slate-400 font-mono">GAAP P&L</span>
+              </div>
+              <div class="h-64 w-full">
+                <canvas id="financialPLChart"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-card p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-white text-sm">Operating Expense Breakdown</h4>
+                <span class="text-[10px] text-slate-400 font-mono">NOV 2026</span>
+              </div>
+              <div class="h-64 w-full">
+                <canvas id="financialExpenseChart"></canvas>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- AI Financial Auditor Notes -->
+          <div class="glass-card p-6 space-y-3 border-blue-500/20">
+            <div class="flex items-center gap-2 text-blue-400 font-semibold text-sm">
+              <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+              <span>Simulated Financial Analyst Agent Findings:</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-300 pt-2">
+              <div class="p-3 rounded-xl bg-white/5 space-y-1 border border-white/5">
+                <div class="font-bold text-white">1. Freight Discrepancy</div>
+                <p class="text-slate-400 leading-relaxed">Invoice #FRT-8812 added $2,270 in uncontracted surcharges. Disputing will recover 1.8% in monthly margin.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-white/5 space-y-1 border border-white/5">
+                <div class="font-bold text-white">2. Meta Ad Blended ROAS</div>
+                <p class="text-slate-400 leading-relaxed">ROAS dropped from 4.2x to 3.4x due to holiday ad auctions. Advise reallocating 20% to Google Shopping search.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-white/5 space-y-1 border border-white/5">
+                <div class="font-bold text-white">3. Wholesale Payment Terms</div>
+                <p class="text-slate-400 leading-relaxed">Shortening B2B payment terms from Net 45 to Net 15 via 2% prompt discount will inject $14,000 into cash flow.</p>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- =============================================================== -->
+        <!-- 5. INVENTORY MANAGEMENT (Full CRUD)                             -->
+        <!-- =============================================================== -->
+        <section id="page-inventory" class="page-view space-y-6">
+          
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-extrabold text-white">Inventory Management</h3>
+              <p class="text-xs text-slate-400">Real-time SKU catalog, safety stock thresholds, and simulated AI restocking.</p>
+            </div>
+            <button onclick="window.openAddProductModal()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition flex items-center gap-2 shadow-lg shadow-blue-500/20">
+              <i data-lucide="plus" class="w-4 h-4"></i> Add New Product
+            </button>
+          </div>
+
+          <!-- Inventory KPI Stats -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-xs text-slate-400">Total Products</div>
+              <div class="text-2xl font-extrabold text-white" id="invTotalProducts">16</div>
+              <div class="text-[11px] text-slate-400">Active tracked SKUs</div>
+            </div>
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-xs text-slate-400">Total Stock Value</div>
+              <div class="text-2xl font-extrabold text-emerald-400" id="invStockValue">$48,900.00</div>
+              <div class="text-[11px] text-slate-400">Asset valuation (COGS)</div>
+            </div>
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-xs text-slate-400">Low Stock SKUs</div>
+              <div class="text-2xl font-extrabold text-amber-400" id="invLowStockCount">5</div>
+              <div class="text-[11px] text-amber-400 font-medium">Reorder recommended</div>
+            </div>
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-xs text-slate-400">Out of Stock</div>
+              <div class="text-2xl font-extrabold text-rose-400" id="invOutStockCount">2</div>
+              <div class="text-[11px] text-rose-400 font-medium">Immediate PO required</div>
+            </div>
+          </div>
+
+          <!-- AI Restocking Recommendation Alert -->
+          <div class="glass-card p-4 border-amber-500/20 bg-amber-500/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                <i data-lucide="package-search" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <h5 class="font-bold text-white text-xs">Simulated AI Restocking Recommendation</h5>
+                <p class="text-xs text-slate-300">
+                  Forecasting model predicts stockout of <strong>OmniHub Smart Screen Pro</strong> in ~1.3 days and <strong>Lumio Ambient Light</strong> in 4 days.
+                </p>
+              </div>
+            </div>
+            <button onclick="window.appRouter.navigate('copilot'); window.bizCopilot.askPrompt('restock');" class="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-xs transition shrink-0">
+              Generate Restock POs
+            </button>
+          </div>
+
+          <!-- Inventory Table Controls & Table -->
+          <div class="glass-card p-6 space-y-4">
+            
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <!-- Search & Filter -->
+              <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+                <input type="text" placeholder="Search SKU or name..." oninput="window.inventoryState.search = this.value; window.renderInventoryTable();" class="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                <select onchange="window.inventoryState.categoryFilter = this.value; window.renderInventoryTable();" class="px-3.5 py-2 rounded-xl bg-[#0C1322] border border-white/10 text-xs text-slate-300 focus:outline-none">
+                  <option value="all">All Categories</option>
+                  <option value="Smart Audio">Smart Audio</option>
+                  <option value="IoT Smart Home">IoT Smart Home</option>
+                  <option value="Wearables">Wearables</option>
+                  <option value="Accessories">Accessories</option>
+                </select>
+                <select onchange="window.inventoryState.statusFilter = this.value; window.renderInventoryTable();" class="px-3.5 py-2 rounded-xl bg-[#0C1322] border border-white/10 text-xs text-slate-300 focus:outline-none">
+                  <option value="all">All Statuses</option>
+                  <option value="in-stock">In Stock</option>
+                  <option value="low-stock">Low Stock</option>
+                  <option value="out-of-stock">Out of Stock</option>
+                </select>
+              </div>
+
+              <!-- Sorting -->
+              <div class="flex items-center gap-2 text-xs text-slate-400">
+                <span>Sort by:</span>
+                <select onchange="window.inventoryState.sortBy = this.value; window.renderInventoryTable();" class="px-3 py-1.5 rounded-xl bg-[#0C1322] border border-white/10 text-xs text-slate-300 focus:outline-none">
+                  <option value="name">Product Name</option>
+                  <option value="stock">Current Stock</option>
+                  <option value="unitPrice">Unit Price</option>
+                  <option value="id">SKU ID</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-white/10 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                    <th class="py-3 px-4">SKU ID</th>
+                    <th class="py-3 px-4">Product Name</th>
+                    <th class="py-3 px-4">Category</th>
+                    <th class="py-3 px-4">Current Stock</th>
+                    <th class="py-3 px-4">Min. Stock</th>
+                    <th class="py-3 px-4">Unit Price</th>
+                    <th class="py-3 px-4">Status</th>
+                    <th class="py-3 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="inventoryTableBody">
+                  <!-- Populated via renderInventoryTable() -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination info -->
+            <div class="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-white/5">
+              <span id="invPaginationInfo">Showing 1 to 8 of 16 products</span>
+              <div class="flex items-center gap-1.5">
+                <button onclick="if(window.inventoryState.page>1){ window.inventoryState.page--; window.renderInventoryTable(); }" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300">Previous</button>
+                <button onclick="window.inventoryState.page++; window.renderInventoryTable();" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300">Next</button>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =============================================================== -->
+        <!-- 6. FORECASTING (Predictive Analytics)                            -->
+        <!-- =============================================================== -->
+        <section id="page-forecasting" class="page-view space-y-6">
+          
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-extrabold text-white">Predictive Forecasting</h3>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                  DEMO SIMULATION · PROPHET-SARIMAX
+                </span>
+              </div>
+              <p class="text-xs text-slate-400">Predictive sales, revenue, demand velocity, and 95% Bayesian confidence intervals.</p>
+            </div>
+
+            <!-- Timeframe Segment Selector -->
+            <div class="segmented-control">
+              <button class="segmented-btn" id="fcBtn-7d" onclick="window.currentForecastTimeframe='7d'; document.querySelectorAll('.segmented-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active'); window.BizCharts.initForecastingChart('forecastingChart','7d');">7 Days</button>
+              <button class="segmented-btn active" id="fcBtn-30d" onclick="window.currentForecastTimeframe='30d'; document.querySelectorAll('.segmented-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active'); window.BizCharts.initForecastingChart('forecastingChart','30d');">30 Days</button>
+              <button class="segmented-btn" id="fcBtn-90d" onclick="window.currentForecastTimeframe='90d'; document.querySelectorAll('.segmented-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active'); window.BizCharts.initForecastingChart('forecastingChart','90d');">90 Days</button>
+            </div>
+          </div>
+
+          <!-- Model Accuracy Metrics (MAE, RMSE, MAPE) -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono">MODEL ARCHITECTURE</div>
+              <div class="text-base font-extrabold text-white">Prophet-SARIMAX</div>
+              <div class="text-[10px] text-blue-400">SME Bayesian Priors</div>
+            </div>
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono">MEAN ABS ERROR (MAE)</div>
+              <div class="text-xl font-extrabold text-emerald-400">$1,240.50</div>
+              <div class="text-[10px] text-slate-400">Within ±1.02% variance</div>
+            </div>
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono">ROOT MEAN SQ (RMSE)</div>
+              <div class="text-xl font-extrabold text-cyan-400">$1,852.10</div>
+              <div class="text-[10px] text-slate-400">Outlier penalization score</div>
+            </div>
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono">MAPE ACCURACY</div>
+              <div class="text-xl font-extrabold text-emerald-400">3.24%</div>
+              <div class="text-[10px] text-emerald-400">96.76% Precision Index</div>
+            </div>
+          </div>
+
+          <!-- Forecasting Main Interactive Chart -->
+          <div class="glass-card p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+              <div>
+                <h4 class="font-bold text-white text-sm">Historical Actuals vs. Simulated Forecast</h4>
+                <p class="text-xs text-slate-400">Solid line: verified ledger | Dotted line: AI prediction with 95% upper/lower confidence band</p>
+              </div>
+              <span class="text-[11px] font-mono text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-full border border-cyan-500/20">
+                Confidence Band: 95%
+              </span>
+            </div>
+            <div class="h-80 w-full">
+              <canvas id="forecastingChart"></canvas>
+            </div>
+          </div>
+
+          <!-- SKU Inventory Demand Forecast Table -->
+          <div class="glass-card p-6 space-y-4">
+            <h4 class="font-bold text-white text-sm">Upcoming SKU Demand & Deficit Forecast (Next 30 Days)</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="border-b border-white/10 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                    <th class="py-3 px-4">SKU ID</th>
+                    <th class="py-3 px-4">Product Name</th>
+                    <th class="py-3 px-4">Current Stock</th>
+                    <th class="py-3 px-4">Projected 30D Demand</th>
+                    <th class="py-3 px-4">Projected Deficit</th>
+                    <th class="py-3 px-4">AI Recommended PO</th>
+                    <th class="py-3 px-4">Urgency</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                  <tr>
+                    <td class="py-3 px-4 font-mono text-slate-400">PRD-102</td>
+                    <td class="py-3 px-4 font-semibold text-white">OmniHub Smart Screen Pro</td>
+                    <td class="py-3 px-4 text-amber-400 font-bold">18 units</td>
+                    <td class="py-3 px-4 text-slate-200">94 units</td>
+                    <td class="py-3 px-4 text-rose-400 font-bold">-76 units</td>
+                    <td class="py-3 px-4 font-mono text-cyan-400 font-bold">120 units</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">CRITICAL</span></td>
+                  </tr>
+                  <tr>
+                    <td class="py-3 px-4 font-mono text-slate-400">PRD-106</td>
+                    <td class="py-3 px-4 font-semibold text-white">Lumio Smart Ambient Light</td>
+                    <td class="py-3 px-4 text-amber-400 font-bold">6 units</td>
+                    <td class="py-3 px-4 text-slate-200">48 units</td>
+                    <td class="py-3 px-4 text-rose-400 font-bold">-42 units</td>
+                    <td class="py-3 px-4 font-mono text-cyan-400 font-bold">75 units</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">HIGH</span></td>
+                  </tr>
+                  <tr>
+                    <td class="py-3 px-4 font-mono text-slate-400">PRD-112</td>
+                    <td class="py-3 px-4 font-semibold text-white">AirSense Air Monitor</td>
+                    <td class="py-3 px-4 text-amber-400 font-bold">4 units</td>
+                    <td class="py-3 px-4 text-slate-200">32 units</td>
+                    <td class="py-3 px-4 text-rose-400 font-bold">-28 units</td>
+                    <td class="py-3 px-4 font-mono text-cyan-400 font-bold">50 units</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">HIGH</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- =============================================================== -->
+        <!-- 7. ANOMALY DETECTION (Investigation Drawer & Resolution)        -->
+        <!-- =============================================================== -->
+        <section id="page-anomalies" class="page-view space-y-6">
+          
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-extrabold text-white">Anomaly Detection & Risk Guard</h3>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                  REAL-TIME STATISTICAL AUDIT
+                </span>
+              </div>
+              <p class="text-xs text-slate-400">Simulated isolation forest and Z-score deviation monitoring for unusual sales, expenses, and inventory shrink.</p>
+            </div>
+            
+            <button onclick="window.showToast('Ran automated anomaly re-scan across 1,284 transactions', 'success')" class="px-3.5 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white text-xs font-semibold transition flex items-center gap-2">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Trigger Re-Scan
+            </button>
+          </div>
+
+          <!-- Anomalies Table -->
+          <div class="glass-card p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="font-bold text-white text-sm">Flagged Anomalies & Security Events</h4>
+                <p class="text-xs text-slate-400">Click "Investigate" to open the detailed diagnostic drawer and trigger remediation.</p>
+              </div>
+              <span class="text-xs text-slate-400">5 Active Events</span>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-white/10 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                    <th class="py-3 px-4">Event ID</th>
+                    <th class="py-3 px-4">Anomaly Title & Category</th>
+                    <th class="py-3 px-4">Financial Impact</th>
+                    <th class="py-3 px-4">Deviation</th>
+                    <th class="py-3 px-4">Severity</th>
+                    <th class="py-3 px-4">Status</th>
+                    <th class="py-3 px-4 text-right">Remediation</th>
+                  </tr>
+                </thead>
+                <tbody id="anomaliesTableBody">
+                  <!-- Populated via renderAnomaliesTable() -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- =============================================================== -->
+        <!-- 8. REPORTS & DOCUMENTS                                          -->
+        <!-- =============================================================== -->
+        <section id="page-reports" class="page-view space-y-6">
+          
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-extrabold text-white">Reports & Executive Documents</h3>
+              <p class="text-xs text-slate-400">Automated business intelligence briefings, GAAP financials, and downloadable summaries.</p>
+            </div>
+            <button onclick="window.previewReport('REP-01')" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition flex items-center gap-2">
+              <i data-lucide="file-plus" class="w-4 h-4"></i> Generate Instant Summary
+            </button>
+          </div>
+
+          <!-- 6 Report Cards Grid (Requirement 13) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <div class="glass-card p-6 space-y-4">
+              <div class="flex items-start justify-between">
+                <div class="w-10 h-10 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+                  <i data-lucide="sun" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-slate-400 bg-white/5 px-2 py-0.5 rounded-full">Daily at 07:00 AM</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-base">Daily Business Summary</h4>
+                <p class="text-xs text-slate-400 mt-1">Executive snapshot covering gross sales, completed orders, pending shipments, returns, and cash position.</p>
+              </div>
+              <div class="pt-3 border-t border-white/5 flex items-center justify-between">
+                <button onclick="window.previewReport('REP-01')" class="text-xs text-blue-400 hover:text-blue-300 font-semibold">Preview Details →</button>
+                <button onclick="window.downloadReportFile('pdf')" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300"><i data-lucide="download" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+
+            <div class="glass-card p-6 space-y-4">
+              <div class="flex items-start justify-between">
+                <div class="w-10 h-10 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+                  <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-slate-400 bg-white/5 px-2 py-0.5 rounded-full">Every Monday</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-base">Weekly Sales Report</h4>
+                <p class="text-xs text-slate-400 mt-1">Multi-channel sales performance, conversion rates by channel, top SKU contribution, and CAC metrics.</p>
+              </div>
+              <div class="pt-3 border-t border-white/5 flex items-center justify-between">
+                <button onclick="window.previewReport('REP-02')" class="text-xs text-blue-400 hover:text-blue-300 font-semibold">Preview Details →</button>
+                <button onclick="window.downloadReportFile('csv')" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300"><i data-lucide="download" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+
+            <div class="glass-card p-6 space-y-4">
+              <div class="flex items-start justify-between">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                  <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-slate-400 bg-white/5 px-2 py-0.5 rounded-full">Monthly</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-base">Monthly Financial Report</h4>
+                <p class="text-xs text-slate-400 mt-1">Full GAAP compliant balance sheet, income statement, EBITDA breakdown, cash flow statement, and cost audits.</p>
+              </div>
+              <div class="pt-3 border-t border-white/5 flex items-center justify-between">
+                <button onclick="window.previewReport('REP-03')" class="text-xs text-blue-400 hover:text-blue-300 font-semibold">Preview Details →</button>
+                <button onclick="window.downloadReportFile('pdf')" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300"><i data-lucide="download" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+
+            <div class="glass-card p-6 space-y-4">
+              <div class="flex items-start justify-between">
+                <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                  <i data-lucide="package" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-slate-400 bg-white/5 px-2 py-0.5 rounded-full">Twice Weekly</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-base">Inventory & Restock Report</h4>
+                <p class="text-xs text-slate-400 mt-1">Lead-time adjusted stock projections, safety stock health, dead-stock warnings, and pre-drafted PO orders.</p>
+              </div>
+              <div class="pt-3 border-t border-white/5 flex items-center justify-between">
+                <button onclick="window.previewReport('REP-04')" class="text-xs text-blue-400 hover:text-blue-300 font-semibold">Preview Details →</button>
+                <button onclick="window.downloadReportFile('csv')" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300"><i data-lucide="download" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+
+            <div class="glass-card p-6 space-y-4">
+              <div class="flex items-start justify-between">
+                <div class="w-10 h-10 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center">
+                  <i data-lucide="trending-up" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-slate-400 bg-white/5 px-2 py-0.5 rounded-full">Bi-Weekly</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-base">Forecast & Demand Report</h4>
+                <p class="text-xs text-slate-400 mt-1">Prophet-SARIMAX statistical forecast for Q4 peak season with 95% Bayesian bounds and supplier capacity constraints.</p>
+              </div>
+              <div class="pt-3 border-t border-white/5 flex items-center justify-between">
+                <button onclick="window.previewReport('REP-05')" class="text-xs text-blue-400 hover:text-blue-300 font-semibold">Preview Details →</button>
+                <button onclick="window.downloadReportFile('pdf')" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300"><i data-lucide="download" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+
+            <div class="glass-card p-6 space-y-4">
+              <div class="flex items-start justify-between">
+                <div class="w-10 h-10 rounded-2xl bg-rose-500/10 text-rose-400 flex items-center justify-center">
+                  <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-slate-400 bg-white/5 px-2 py-0.5 rounded-full">On Demand</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-base">Anomaly & Security Audit</h4>
+                <p class="text-xs text-slate-400 mt-1">Full event log of flagged transactions, expense variances, supplier billing disputes, and inventory shrinkage events.</p>
+              </div>
+              <div class="pt-3 border-t border-white/5 flex items-center justify-between">
+                <button onclick="window.previewReport('REP-06')" class="text-xs text-blue-400 hover:text-blue-300 font-semibold">Preview Details →</button>
+                <button onclick="window.downloadReportFile('csv')" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300"><i data-lucide="download" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =============================================================== -->
+        <!-- 9. AI AGENTS (Five Agent Cards & MCP Tool Activity)             -->
+        <!-- =============================================================== -->
+        <section id="page-agents" class="page-view space-y-6">
+          
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-extrabold text-white">Autonomous AI Agents</h3>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                  SIMULATED MULTI-AGENT RUNTIME
+                </span>
+              </div>
+              <p class="text-xs text-slate-400">Specialized agent roster, simulated task throughput, execution metrics, and MCP tool traces.</p>
+            </div>
+            
+            <button onclick="window.showToast('All 5 autonomous agents active and listening to event bus', 'success')" class="px-3.5 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 5 Agents Operational
+            </button>
+          </div>
+
+          <!-- 5 Agent Cards Grid (Requirement 11) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Supervisor Agent -->
+            <div class="glass-card p-6 space-y-4 border-blue-500/30">
+              <div class="flex items-start justify-between">
+                <div class="w-10 h-10 rounded-2xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold">
+                  <i data-lucide="crown" class="w-5 h-5"></i>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ACTIVE</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-base">Supervisor Agent</h4>
+                <div class="text-[11px] text-blue-400 font-mono">Orchestration & Workflow Commander</div>
+                <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                  Coordinates multi-agent workflows, decomposes user inquiries, routes tasks to domain agents, and synthesizes executive responses.
+                </p>
+              </div>
+              <div class="grid grid-cols-3 gap-2 pt-3 border-t border-white/5 text-center text-xs">
+                <div>
+                  <div class="text-[10px] text-slate-500">TASKS</div>
+                  <div class="font-bold text-white">4,892</div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-500">SUCCESS</div>
+                  <div class="font-bold text-emerald-400">99.8%</div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-500">LATENCY</div>
+                  <div class="font-bold text-slate-300">142ms</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Financial Analyst Agent -->
+            <div class="glass-card p-6 space-y-4">
+              <div class="flex items-start justify-between">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                  <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ACTIVE</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-base">Financial Analyst Agent</h4>
+                <div class="text-[11px] text-emerald-400 font-mono">P&L, Margins & Cash Runway</div>
+                <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                  Monitors EBITDA, gross profit margins, OPEX overhead, supplier price contracts, and delivers actionable margin enhancement playbooks.
+                </p>
+              </div>
+              <div class="grid grid-cols-3 gap-2 pt-3 border-t border-white/5 text-center text-xs">
+                <div>
+                  <div class="text-[10px] text-slate-500">TASKS</div>
+                  <div class="font-bold text-white">3,410</div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-500">SUCCESS</div>
+                  <div class="font-bold text-emerald-400">99.4%</div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-500">LATENCY</div>
+                  <div class="font-bold text-slate-300">310ms</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Forecasting Agent -->
+            <div class="glass-card p-6 space-y-4">
+              <div class="flex items-start justify-between">
+                <div class="w-10 h-10 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">
+                  <i data-lucide="trending-up" class="w-5 h-5"></i>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ACTIVE</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-base">Forecasting Agent</h4>
+                <div class="text-[11px] text-cyan-400 font-mono">Demand, Revenue & Velocity</div>
+                <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                  Runs seasonal Prophet-SARIMAX predictive simulations across 7-day, 30-day, and 90-day time horizons with 95% Bayesian bounds.
+                </p>
+              </div>
+              <div class="grid grid-cols-3 gap-2 pt-3 border-t border-white/5 text-center text-xs">
+                <div>
+                  <div class="text-[10px] text-slate-500">TASKS</div>
+                  <div class="font-bold text-white">2,854</div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-500">SUCCESS</div>
+                  <div class="font-bold text-emerald-400">98.9%</div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-500">LATENCY</div>
+                  <div class="font-bold text-slate-300">680ms</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Anomaly Detection Agent -->
+            <div class="glass-card p-6 space-y-4">
+              <div class="flex items-start justify-between">
+                <div class="w-10 h-10 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold">
+                  <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ACTIVE</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-base">Anomaly Detection Agent</h4>
+                <div class="text-[11px] text-rose-400 font-mono">Fraud, Expense & Shrink Guard</div>
+                <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                  Monitors transaction velocity, inventory cycles, and supplier invoices using statistical Z-score and isolation forest models.
+                </p>
+              </div>
+              <div class="grid grid-cols-3 gap-2 pt-3 border-t border-white/5 text-center text-xs">
+                <div>
+                  <div class="text-[10px] text-slate-500">TASKS</div>
+                  <div class="font-bold text-white">5,120</div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-500">SUCCESS</div>
+                  <div class="font-bold text-emerald-400">99.9%</div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-500">LATENCY</div>
+                  <div class="font-bold text-slate-300">95ms</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Business Advisor Agent -->
+            <div class="glass-card p-6 space-y-4">
+              <div class="flex items-start justify-between">
+                <div class="w-10 h-10 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold">
+                  <i data-lucide="compass" class="w-5 h-5"></i>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-500/20 text-slate-400 border border-slate-500/30">IDLE</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-base">Business Advisor Agent</h4>
+                <div class="text-[11px] text-purple-400 font-mono">Strategic Growth & Unit Economics</div>
+                <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                  Provides strategic growth playbooks tailored to SMEs, benchmark pricing insights against competitors, and wholesale expansion models.
+                </p>
+              </div>
+              <div class="grid grid-cols-3 gap-2 pt-3 border-t border-white/5 text-center text-xs">
+                <div>
+                  <div class="text-[10px] text-slate-500">TASKS</div>
+                  <div class="font-bold text-white">1,980</div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-500">SUCCESS</div>
+                  <div class="font-bold text-emerald-400">99.1%</div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-500">LATENCY</div>
+                  <div class="font-bold text-slate-300">420ms</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Mock MCP Tool Activity Trace (Requirement 11) -->
+          <div class="glass-card p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="font-bold text-white text-sm">Simulated Model Context Protocol (MCP) Tool Activity</h4>
+                <p class="text-xs text-slate-400">Mock audit log of sub-agent tool invocations across ERP and e-commerce APIs.</p>
+              </div>
+              <span class="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">
+                MOCK MCP PROTOCOL
+              </span>
+            </div>
+
+            <div class="space-y-2 font-mono text-xs">
+              <div class="p-3 rounded-xl bg-black/40 border border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+                <div class="flex items-center gap-2 text-slate-300">
+                  <span class="text-slate-500">15:42:10</span>
+                  <span class="text-blue-400 font-bold">[Supervisor]</span>
+                  <span>mcp://bizpilot/agent_dispatch</span>
+                  <span class="text-slate-500 text-[11px]">{ route: 'financial_health', priority: 'high' }</span>
+                </div>
+                <span class="text-emerald-400 font-bold text-[11px]">200 OK</span>
+              </div>
+
+              <div class="p-3 rounded-xl bg-black/40 border border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+                <div class="flex items-center gap-2 text-slate-300">
+                  <span class="text-slate-500">15:42:11</span>
+                  <span class="text-emerald-400 font-bold">[Financial Analyst]</span>
+                  <span>mcp://quickbooks/gl_ledger</span>
+                  <span class="text-slate-500 text-[11px]">{ dateRange: '2026-11-01..2026-11-20', accounts: ['COGS', 'OPEX'] }</span>
+                </div>
+                <span class="text-emerald-400 font-bold text-[11px]">200 OK</span>
+              </div>
+
+              <div class="p-3 rounded-xl bg-black/40 border border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+                <div class="flex items-center gap-2 text-slate-300">
+                  <span class="text-slate-500">15:41:05</span>
+                  <span class="text-rose-400 font-bold">[Anomaly Detection]</span>
+                  <span>mcp://bank/feed_monitor</span>
+                  <span class="text-slate-500 text-[11px]">{ scanWindow: '15m', threshold_z: 2.8 }</span>
+                </div>
+                <span class="text-emerald-400 font-bold text-[11px]">200 OK</span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- =============================================================== -->
+        <!-- 10. DATA SOURCES & INGESTION                                    -->
+        <!-- =============================================================== -->
+        <section id="page-data-sources" class="page-view space-y-6">
+          
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-extrabold text-white">Data Sources & Ingestion</h3>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                  CLIENT-SIDE PARSING
+                </span>
+              </div>
+              <p class="text-xs text-slate-400">Simulate file ingestion (CSV, XLSX, JSON, PDF) with local validation and parsing preview.</p>
+            </div>
+            
+            <span class="text-[11px] text-slate-500 font-mono">No external files uploaded to any server</span>
+          </div>
+
+          <!-- Drag and Drop Upload Area (Requirement 12) -->
+          <div class="glass-card p-8 border-dashed border-2 border-white/20 hover:border-blue-500/50 transition text-center space-y-3 cursor-pointer" onclick="document.getElementById('fileUploadInput').click()">
+            <input type="file" id="fileUploadInput" class="hidden" accept=".csv, .xlsx, .json, .pdf" onchange="window.handleSimulatedFileUpload(this.files)">
+            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto shadow-md">
+              <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-white text-sm">Drag and drop business documents here, or click to browse</h4>
+              <p class="text-xs text-slate-400 mt-1">Supports CSV, XLSX, JSON, and PDF formats (Max 25MB simulated size)</p>
+            </div>
+            <div class="flex items-center justify-center gap-2 pt-2">
+              <span class="px-2 py-0.5 rounded bg-white/5 text-[10px] text-slate-400 font-mono">.CSV</span>
+              <span class="px-2 py-0.5 rounded bg-white/5 text-[10px] text-slate-400 font-mono">.XLSX</span>
+              <span class="px-2 py-0.5 rounded bg-white/5 text-[10px] text-slate-400 font-mono">.JSON</span>
+              <span class="px-2 py-0.5 rounded bg-white/5 text-[10px] text-slate-400 font-mono">.PDF</span>
+            </div>
+          </div>
+
+          <!-- Simulated Progress Bar (Reveals on upload) -->
+          <div id="uploadProgressWrap" class="hidden glass-card p-4 space-y-2 border-blue-500/30">
+            <div class="flex items-center justify-between text-xs">
+              <span id="uploadStatusText" class="text-blue-400 font-medium">Simulating parsing & schema mapping...</span>
+              <span class="text-slate-400 font-mono">Client Ingestion Engine</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div id="uploadProgressBar" class="bg-gradient-to-r from-blue-500 to-cyan-400 h-2 w-0 transition-all duration-300"></div>
+            </div>
+          </div>
+
+          <!-- Active Ingested Files List -->
+          <div class="glass-card p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-white/5 pb-3">
+              <h4 class="font-bold text-white text-sm">Connected Data Files & Validation Status</h4>
+              <span class="text-xs text-slate-400">4 Active Datasets</span>
+            </div>
+            <div id="dataSourcesList" class="space-y-3">
+              <!-- Rendered via renderDataSourcesList() -->
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- =============================================================== -->
+        <!-- 11. AUTOMATION (Simulated Workflow Triggers)                    -->
+        <!-- =============================================================== -->
+        <section id="page-automation" class="page-view space-y-6">
+          
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-extrabold text-white">Automated Workflows</h3>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  EVENT & SCHEDULED CRON
+                </span>
+              </div>
+              <p class="text-xs text-slate-400">Manage autonomous background jobs, real-time alert triggers, and automated report broadcasts.</p>
+            </div>
+
+            <button onclick="window.showToast('Workflow creator opened (Demo)', 'info')" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition flex items-center gap-2">
+              <i data-lucide="plus" class="w-4 h-4"></i> New Workflow
+            </button>
+          </div>
+
+          <!-- 5 Workflow Cards Grid (Requirement 14) -->
+          <div id="automationCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Populated via renderAutomationCards() -->
+          </div>
+
+        </section>
+
+
+        <!-- =============================================================== -->
+        <!-- 12. SETTINGS & AI CONFIGURATION                                 -->
+        <!-- =============================================================== -->
+        <section id="page-settings" class="page-view space-y-6">
+          
+          <div>
+            <h3 class="text-xl font-extrabold text-white">Platform Settings & AI Configuration</h3>
+            <p class="text-xs text-slate-400">Manage business profile, team permissions, demo AI model provider parameters, and security.</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Left: Settings Navigation / Sections -->
+            <div class="glass-card p-4 space-y-1 text-xs">
+              <button class="w-full text-left px-3 py-2.5 rounded-xl bg-blue-600/15 text-blue-400 font-semibold flex items-center gap-2.5">
+                <i data-lucide="building" class="w-4 h-4"></i> Business Profile
+              </button>
+              <button class="w-full text-left px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 flex items-center gap-2.5 transition">
+                <i data-lucide="users" class="w-4 h-4"></i> Team & Roles
+              </button>
+              <button class="w-full text-left px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 flex items-center gap-2.5 transition">
+                <i data-lucide="cpu" class="w-4 h-4"></i> AI Model Configuration
+              </button>
+              <button class="w-full text-left px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 flex items-center gap-2.5 transition">
+                <i data-lucide="bell" class="w-4 h-4"></i> Notifications & Webhooks
+              </button>
+              <button class="w-full text-left px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 flex items-center gap-2.5 transition">
+                <i data-lucide="shield-check" class="w-4 h-4"></i> Security & Privacy
+              </button>
+            </div>
+
+            <!-- Right: Settings Content Panels -->
+            <div class="lg:col-span-2 space-y-6">
+              
+              <!-- Business Information Card -->
+              <div class="glass-card p-6 space-y-4">
+                <h4 class="font-bold text-white text-sm">Business Entity Information</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                  <div class="space-y-1">
+                    <label class="text-slate-400 font-medium">Company Name</label>
+                    <input type="text" value="Apex Retail & Distribution Ltd." class="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none">
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-slate-400 font-medium">Industry Vertical</label>
+                    <input type="text" value="Consumer Electronics & Smart Hardware" class="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none">
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-slate-400 font-medium">Base Currency</label>
+                    <input type="text" value="USD ($) - US Dollar" class="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none">
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-slate-400 font-medium">Fiscal Year Start</label>
+                    <input type="text" value="January 01 (Calendar Year)" class="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none">
+                  </div>
+                </div>
+                <div class="pt-2 flex justify-end">
+                  <button onclick="window.showToast('Business details saved to local state', 'success')" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold">Save Changes</button>
+                </div>
+              </div>
+
+              <!-- AI Model Configuration (Demo Simulation - Requirement 15) -->
+              <div class="glass-card p-6 space-y-4 border-blue-500/20">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h4 class="font-bold text-white text-sm">AI Model Configuration (Simulated Demo Mode)</h4>
+                    <p class="text-xs text-slate-400">Configure simulated providers and routing hyperparameters. No real API keys stored.</p>
+                  </div>
+                  <span class="text-[10px] font-mono text-blue-400 bg-blue-500/10 px-2.5 py-0.5 rounded-full border border-blue-500/20">MOCK CONFIG ONLY</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                  <div class="space-y-1">
+                    <label class="text-slate-400 font-medium">Primary Reasoning Provider</label>
+                    <select class="w-full px-3.5 py-2.5 rounded-xl bg-[#0C1322] border border-white/10 text-white focus:outline-none">
+                      <option selected>Google Gemini 2.0 Flash / Pro (Simulated)</option>
+                      <option>Anthropic Claude 3.5 Sonnet (Simulated)</option>
+                      <option>OpenAI GPT-4o (Simulated)</option>
+                      <option>Meta Llama 3.3 70B (Local Ollama Mock)</option>
+                    </select>
+                  </div>
+
+                  <div class="space-y-1">
+                    <label class="text-slate-400 font-medium">Forecasting Engine</label>
+                    <select class="w-full px-3.5 py-2.5 rounded-xl bg-[#0C1322] border border-white/10 text-white focus:outline-none">
+                      <option selected>Prophet + SARIMAX Statistical Pipeline</option>
+                      <option>DeepAR Neural Forecaster (Simulated)</option>
+                      <option>Holt-Winters Exponential Smoothing</option>
+                    </select>
+                  </div>
+
+                  <div class="space-y-1">
+                    <label class="text-slate-400 font-medium">Temperature (Creativity vs Determinism)</label>
+                    <input type="range" min="0" max="1" step="0.1" value="0.2" class="w-full accent-blue-500">
+                    <div class="flex justify-between text-[10px] text-slate-500">
+                      <span>0.0 (Deterministic)</span>
+                      <span>0.2</span>
+                      <span>1.0 (Creative)</span>
+                    </div>
+                  </div>
+
+                  <div class="space-y-1">
+                    <label class="text-slate-400 font-medium">Mock API Key Status</label>
+                    <input type="text" disabled value="••••••••••••••••••••••••••••••••" class="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-500 cursor-not-allowed">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Team Members Table -->
+              <div class="glass-card p-6 space-y-4">
+                <div class="flex items-center justify-between">
+                  <h4 class="font-bold text-white text-sm">Team Members & Permissions</h4>
+                  <button onclick="window.showToast('Invite member modal (Demo)', 'info')" class="text-blue-400 text-xs font-semibold">+ Invite</button>
+                </div>
+                <div class="space-y-3 text-xs">
+                  <div class="flex items-center justify-between py-2 border-b border-white/5">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-7 h-7 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-[11px]">AR</div>
+                      <div>
+                        <div class="font-semibold text-white">Abir Rahman</div>
+                        <div class="text-[10px] text-slate-400">abir@bizpilot.ai</div>
+                      </div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-semibold">Owner</span>
+                  </div>
+                  <div class="flex items-center justify-between py-2 border-b border-white/5">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-7 h-7 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-[11px]">ER</div>
+                      <div>
+                        <div class="font-semibold text-white">Elena Rostova</div>
+                        <div class="text-[10px] text-slate-400">elena@bizpilot.ai</div>
+                      </div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-full bg-white/5 text-slate-400 text-[10px]">CFO / Approver</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODALS & DRAWERS (Cupertino Style)                                    -->
+  <!-- ===================================================================== -->
+
+  <!-- 1. INVENTORY ADD/EDIT MODAL -->
+  <div id="productModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-overlay p-4">
+    <div class="glass-card max-w-lg w-full p-6 space-y-4 rounded-3xl border border-white/10 shadow-2xl animate-fade-in">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <h3 id="productModalTitle" class="font-bold text-base text-white">Add New Product</h3>
+        <button onclick="window.closeProductModal()" class="p-1 rounded-lg text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="window.saveProductHandler(event)" class="space-y-4 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="text-slate-400 font-medium">Product SKU ID</label>
+            <input type="text" id="prodModalId" class="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none" required>
+          </div>
+          <div class="space-y-1">
+            <label class="text-slate-400 font-medium">Category</label>
+            <select id="prodModalCategory" class="w-full px-3 py-2 rounded-xl bg-[#0C1322] border border-white/10 text-white focus:outline-none">
+              <option value="Smart Audio">Smart Audio</option>
+              <option value="IoT Smart Home">IoT Smart Home</option>
+              <option value="Wearables">Wearables</option>
+              <option value="Accessories">Accessories</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-slate-400 font-medium">Product Name</label>
+          <input type="text" id="prodModalName" class="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none" required>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div class="space-y-1">
+            <label class="text-slate-400 font-medium">Current Stock</label>
+            <input type="number" id="prodModalStock" class="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none" required>
+          </div>
+          <div class="space-y-1">
+            <label class="text-slate-400 font-medium">Min. Stock Alert</label>
+            <input type="number" id="prodModalMinStock" class="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none" required>
+          </div>
+          <div class="space-y-1">
+            <label class="text-slate-400 font-medium">Unit Price ($)</label>
+            <input type="number" step="0.01" id="prodModalPrice" class="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none" required>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-slate-400 font-medium">Supplier & Lead Time</label>
+          <input type="text" id="prodModalSupplier" value="AcousticTech Shenzen (14 Days)" class="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none">
+        </div>
+
+        <div class="pt-3 border-t border-white/10 flex items-center justify-end gap-2">
+          <button type="button" onclick="window.closeProductModal()" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300">Cancel</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold">Save SKU</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. ANOMALY INVESTIGATION DRAWER (Requirement 10) -->
+  <div id="anomalyDrawer" class="hidden fixed inset-0 z-50 modal-overlay flex justify-end">
+    <div class="w-full max-w-lg bg-[#0C1322] border-l border-white/10 h-full p-6 flex flex-col space-y-6 slide-in-right overflow-y-auto">
+      
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <div>
+          <span id="invDrawerId" class="text-xs font-mono text-rose-400 font-bold">ANM-201</span>
+          <h3 id="invDrawerTitle" class="font-bold text-base text-white mt-0.5">Air Freight Surcharge Deviation</h3>
+        </div>
+        <button onclick="window.closeInvestigationDrawer()" class="p-1.5 rounded-lg text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="space-y-4 text-xs flex-1">
+        
+        <div class="grid grid-cols-2 gap-3 p-3.5 rounded-2xl bg-white/5">
+          <div>
+            <div class="text-slate-500">Category</div>
+            <div id="invDrawerCategory" class="font-semibold text-slate-200">Suspicious Expenses</div>
+          </div>
+          <div>
+            <div class="text-slate-500">Detection Source</div>
+            <div id="invDrawerSource" class="font-semibold text-slate-200">QuickBooks PO-9821</div>
+          </div>
+          <div>
+            <div class="text-slate-500">Flagged Amount</div>
+            <div id="invDrawerAmount" class="font-bold text-rose-400 font-mono text-sm">$3,420.00</div>
+          </div>
+          <div>
+            <div class="text-slate-500">Historical Expected</div>
+            <div id="invDrawerExpected" class="font-mono text-slate-300 text-sm">$1,150.00</div>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+          <div class="text-amber-400 font-semibold mb-1">Statistical Deviation</div>
+          <div id="invDrawerDeviation" class="text-base font-extrabold text-amber-300 font-mono">+197.4% Above Normal Variance</div>
+          <p id="invDrawerImpact" class="text-[11px] text-slate-300 mt-1">Impacts November net operating margin by 2.1%.</p>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Event Description</label>
+          <p id="invDrawerDescription" class="text-slate-300 leading-relaxed bg-white/5 p-3 rounded-xl border border-white/5">
+            Air freight carrier applied unexpected peak congestion surcharge of $2,270 on electronics shipment from Shenzhen without prior contract amendment.
+          </p>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-blue-400 font-semibold uppercase tracking-wider text-[10px] flex items-center gap-1">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> AI Remediation Recommendation
+          </label>
+          <p id="invDrawerAction" class="text-slate-200 leading-relaxed bg-blue-500/10 p-3 rounded-xl border border-blue-500/20 font-medium">
+            Dispute invoice surcharge under master service agreement section 4.2; recover $2,270 overcharge.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Drawer Action Buttons -->
+      <div class="pt-4 border-t border-white/10 flex items-center justify-between gap-3">
+        <button onclick="window.markAnomalyReviewed()" class="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 text-xs font-semibold transition text-center">
+          Mark as Reviewed
+        </button>
+        <button onclick="window.resolveAnomalyAlert()" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition text-center">
+          Resolve Alert
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 3. REPORT PREVIEW MODAL (Requirement 13) -->
+  <div id="reportModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-overlay p-4">
+    <div class="glass-card max-w-xl w-full p-6 space-y-4 rounded-3xl border border-white/10 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <div>
+          <span class="text-[10px] font-mono text-blue-400">EXECUTIVE DOCUMENT PREVIEW</span>
+          <h3 id="reportModalTitle" class="font-bold text-base text-white">Daily Business Summary</h3>
+        </div>
+        <button onclick="window.closeReportModal()" class="p-1 rounded-lg text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="space-y-3 text-xs text-slate-300">
+        <p id="reportModalDesc" class="leading-relaxed"></p>
+        
+        <div class="grid grid-cols-3 gap-2 p-3 rounded-xl bg-white/5 font-mono text-[11px]">
+          <div><span class="text-slate-500 block">FREQUENCY:</span> <span id="reportModalFreq" class="text-white">Daily</span></div>
+          <div><span class="text-slate-500 block">LAST RUN:</span> <span id="reportModalGen" class="text-white">Today 07:00</span></div>
+          <div><span class="text-slate-500 block">FILE SIZE:</span> <span id="reportModalSize" class="text-white">1.2 MB</span></div>
+        </div>
+
+        <!-- Sample Mock Table Preview -->
+        <div class="p-3 rounded-xl bg-black/40 border border-white/5 font-mono text-[10px] space-y-1">
+          <div class="text-slate-500 border-b border-white/5 pb-1">PREVIEW EXTRACT (SIMULATED DATASET)</div>
+          <div class="flex justify-between text-slate-400"><span>Date: 2026-11-20</span><span>Apex Retail Ltd</span></div>
+          <div class="flex justify-between text-slate-300 font-semibold"><span>Gross Sales: $124,580</span><span>Orders: 1,284</span></div>
+          <div class="flex justify-between text-emerald-400"><span>Net Profit: $32,450</span><span>Margin: 26.0%</span></div>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-white/10 flex items-center justify-end gap-2 text-xs">
+        <button onclick="window.downloadReportFile('csv')" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 flex items-center gap-1.5">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i> Download CSV
+        </button>
+        <button onclick="window.downloadReportFile('pdf')" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold flex items-center gap-1.5">
+          <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Export PDF Sample
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. GLOBAL SEARCH MODAL (CMD + K) -->
+  <div id="searchModal" class="hidden fixed inset-0 z-50 flex items-start justify-center pt-24 modal-overlay p-4">
+    <div class="glass-card max-w-xl w-full p-4 space-y-3 rounded-3xl border border-white/10 shadow-2xl animate-fade-in">
+      <div class="flex items-center gap-3 px-3 py-2 rounded-2xl bg-white/5 border border-white/10">
+        <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+        <input type="text" id="globalSearchInput" oninput="window.handleGlobalSearch(this.value)" placeholder="Search pages, inventory SKUs, anomalies, financial metrics..." class="flex-1 bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none">
+        <kbd class="px-1.5 py-0.5 rounded bg-black/40 text-[10px] font-mono text-slate-400">ESC</kbd>
+      </div>
+
+      <!-- Quick results -->
+      <div id="searchResultsContainer" class="space-y-1 max-h-72 overflow-y-auto">
+        <!-- Rendered via handleGlobalSearch() -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. CUPERTINO TOAST CONTAINER -->
+  <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none max-w-sm"></div>
+
+  <!-- App Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/copilot.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+
